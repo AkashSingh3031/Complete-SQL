@@ -1,0 +1,2 @@
+SELECT *
+From customers
