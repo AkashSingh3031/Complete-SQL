@@ -15,15 +15,17 @@
       | customer_id| first_name | last_name | points | state | phone_no | birth_date |
       |-------------|-----------|-----------|--------|-------|----------|------------|
       |             |           |           |        |       |          |            |
+      |             |           |           |        |       |          |            |
       
       ```sql
       SELECT first_name, last_name
       FROM customers;
       ```
-      
       | first_name | last_name |
       |------------|-----------|
       |            |           |
+      |            |           |
+      
       ```sql
       SELECT 
         first_name, 
@@ -35,6 +37,7 @@
       
       | first_name | last_name | points | discount factor |
       |------------|-----------|--------|-----------------|
+      |            |           |        |                 |
       |            |           |        |                 |
 
       `Exercise`
@@ -55,6 +58,7 @@
          | name | unit_price | new_price |
          |------|------------|-----------|
          |      |            |           |
+         |      |            |           |
    
    - ## 1.2 WHERE Clause
       ```sql
@@ -64,7 +68,8 @@
       ```
       | customer_id | first_name | last_name | points | state | phone_no | birth_date |
       |-------------|------------|-----------|--------|-------|----------|------------|
-      |             |           |           |        |       |          |            |
+      |             |            |           |        |       |          |            |
+      |             |            |           |        |       |          |            |
       
       ```sql
       SELECT *
@@ -74,6 +79,7 @@
       | customer_id | first_name | last_name | points | state | phone_no | birth_date |
       |-------------|------------|-----------|--------|-------|----------|------------|
       |             |            |           |        |       |          |            |
+      |             |            |           |        |       |          |            |
       
       ```sql
       SELECT *
@@ -82,6 +88,7 @@
       ```
       | customer_id | first_name | last_name | points | state | phone_no | birth_date |
       |-------------|------------|-----------|--------|-------|----------|------------|
+      |             |            |           |        |       |          |            |
       |             |            |           |        |       |          |            |
 
       `Exercise`
@@ -96,6 +103,7 @@
          | order_id | customer_id | first_name | last_name | points | status | order_date |
          |----------|-------------|------------|-----------|--------|--------|------------|
          |          |             |            |           |        |        |            |
+         |          |             |            |           |        |        |            |
          
    - ### 1.3 AND, OR & NOT Operators
       ```sql
@@ -105,7 +113,8 @@
       ```
       | customer_id | first_name | last_name | points | state | phone_no | birth_date |
       |-------------|------------|-----------|--------|-------|----------|------------|
-      |             |           |           |        |       |          |            |
+      |             |            |           |        |       |          |            |
+      |             |            |           |        |       |          |            |
       
       ```sql
       SELECT *
@@ -114,6 +123,7 @@
       ```
       | customer_id | first_name | last_name | points | state | phone_no | birth_date |
       |-------------|------------|-----------|--------|-------|----------|------------|
+      |             |            |           |        |       |          |            |
       |             |            |           |        |       |          |            |
       
       ```sql
@@ -128,6 +138,7 @@
       ```
       | customer_id | first_name | last_name | points | state | phone_no | birth_date |
       |-------------|------------|-----------|--------|-------|----------|------------|
+      |             |            |           |        |       |          |            |
       |             |            |           |        |       |          |            |
 
       `Exercise`
@@ -144,6 +155,7 @@
          | order_id | product_id | unit_price | quantity | order_item |
          |----------|------------|------------|----------|------------|
          |          |            |            |          |            |
+         |          |            |            |          |            |
          
    - ### 1.4 IN Operators
       ```sql
@@ -159,6 +171,7 @@
       | customer_id | first_name | last_name | points | state | phone_no | birth_date |
       |-------------|------------|-----------|--------|-------|----------|------------|
       |             |            |           |        |       |          |            |
+      |             |            |           |        |       |          |            |
       
       ```sql
       SELECT *
@@ -167,6 +180,7 @@
       ```
       | customer_id | first_name | last_name | points | state | phone_no | birth_date |
       |-------------|------------|-----------|--------|-------|----------|------------|
+      |             |            |           |        |       |          |            |
       |             |            |           |        |       |          |            |
 
       `Exercise`
@@ -181,4 +195,5 @@
          ```
          | order_id | product_id | unit_price | quantity_in_stocks | order_item |
          |----------|------------|------------|--------------------|------------|
+         |          |            |            |                    |            |
          |          |            |            |                    |            |
