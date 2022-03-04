@@ -4,7 +4,9 @@
 | **SNo.** | **Topic** | **Sub Topic** |
 | -------- | --------- | ------------- |
 | 1.       | [Retrieving Data From a Single Table](#1-retrieving-data-from-a-single-table) | [SELECT Clause](#11-select-clause) <br> [WHERE Clause](#12-where-clause) <br> [AND, OR & NOT Operators](#13-and-or--not-operators) <br> [IN Operators](#14-in-operators) <br> [BETWEEN Operators](#15-between-operators) <br> [LIKE Operators](#16-like-operators) <br> [REGEXP Operators](#17-regexp-operators) <br> [IS NULL Operators](#18-is-null-operators) <br> [ORDER BY Operators](#19-order-by-operators) <br> [LIMIT Clause](#110-limit-clause)|
-| 2.       | [Retrieving Data From a Multiple Table](#2-retrieving-data-from-a-multiple-table) |    |
+| 2.       | [Retrieving Data From a Multiple Table](#2-retrieving-data-from-a-multiple-table) | [INNER Joins](#21-inner-joins) <br> [Joining Across Databases](#22-joining-across-databases) <br> [Self Joins](#23-self-joins) <br> [Joining Multiple Tables](#24-joining-multiple-tables) <br> [Compound Join Conditions](#25-compound-join-conditions) <br> [Implicit Join Syntax](#26-implicit-join-syntax) <br> [OUTER Joins](#27-outer-joins) <br> [Outer Join Between Multiple Tables](#28-outer-join-between-multiple-tables) <br> [Self Outer Joins](#29-self-outer-joins) <br> [The USING Clause](#210-the-using-clause) <br> [NATURAL Joins](#211-natural-joins) <br> [CROSS Joins](#212-cross-joins) <br> [UNIONS](#213-unions)|
+| 3.       | [Inserting, Updating, and Deleting Data](#3-inserting-updating-and-deleting-data) | |
+
 ---
 
 ## 1. Retrieving Data From a Single Table
@@ -643,3 +645,478 @@
          |             |            |           |        |       |          |            |
       
 ## 2. Retrieving Data From a Multiple Table
+   - ### 2.1 INNER Joins
+      - `In INNER JOIN keyword, INNER is optional` both `INNER JOIN` & `JOIN` are same
+
+      ```sql
+      SELECT *
+      FROM orders
+      INNER JOIN customers
+         ON orders.customer_id = customers.customer_id;
+      ```
+      ```sql
+      SELECT *
+      FROM orders
+      JOIN customers
+         ON orders.customer_id = customers.customer_id;
+      ```
+      | order_id | customer_id | orderr_date | status | comments | customer_id | first_name | last_name | points | state | phone_no | birth_date |
+      |----------|-------------|-------------|--------|----------|-------------|------------|-----------|--------|-------|----------|------------|
+      |          |             |             |        |          |             |            |           |        |       |          |            |
+      |          |             |             |        |          |             |            |           |        |       |          |            |
+      
+      ```sql
+      SELECT order_id, first_name, last_name
+      FROM orders
+      JOIN customers
+         ON orders.customer_id = customers.customer_id;
+      ```
+      | order_id | first_name | last_name |
+      |----------|------------|-----------|
+      |          |            |           |
+      |          |            |           |
+      
+      ```sql
+      SELECT order_id, customer_id, first_name, last_name
+      FROM orders
+      JOIN customers
+         ON orders.customer_id = customers.customer_id;
+      ```
+      #### `Error ⬆` `because of customer_id`
+      
+      ```sql
+      SELECT order_id, orders.customer_id, first_name, last_name
+      FROM orders
+      JOIN customers
+         ON orders.customer_id = customers.customer_id;
+      ```
+      ```sql
+      SELECT order_id, o.customer_id, first_name, last_name
+      FROM orders o
+      JOIN customers c
+         ON o.customer_id = c.customer_id;
+      ```
+      | order_id | customer_id | first_name | last_name |
+      |----------|-------------|------------|-----------|
+      |          |             |            |           |
+      |          |             |            |           |
+
+      `Exercise`
+      - JOIN the order_items table with products table
+         - each order returns all product_id as well as its name follewed by quantity and unit price from order_items table
+
+         `Solution`
+         ```sql
+         SELECT *
+         FROM order_items oi
+         JOIN products p
+            ON oi.product_id = p.product_id;
+         ```
+         | order_id | product_id | quantity | unit_price | name | quantity_in_stock | unit_price |
+         |----------|------------|----------|------------|------|-------------------|------------|
+         |          |            |          |            |      |                   |            |
+         |          |            |          |            |      |                   |            |
+         ```sql
+         SELECT order_id, oi.product_id, quantity, unit_price
+         FROM order_items oi
+         JOIN products p
+            ON oi.product_id = p.product_id;
+         ```
+         - `both unit_price are different`
+         
+         | order_id | product_id | quantity | unit_price | unit_price |
+         |----------|------------|----------|------------|------------|
+         |          |            |          |            |            |
+         |          |            |          |            |            |
+         ```sql
+         SELECT order_id, oi.product_id, quantity, oi.unit_price
+         FROM order_items oi
+         JOIN products p
+            ON oi.product_id = p.product_id;
+         ```
+         | order_id | product_id | quantity | unit_price |
+         |----------|------------|----------|------------|
+         |          |            |          |            |
+         |          |            |          |            |
+
+   - ### 2.2 Joining Across Databases
+      ```sql
+      USE sql_store;
+      
+      SELECT *
+      FROM order_items oi
+      JOIN sql_inventory.products p
+         ON oi.product_id = p.product_id;
+      ```
+      ```sql
+      USE sql_inventory;
+      
+      SELECT *
+      FROM sql_store.order_items oi
+      JOIN products p
+         ON oi.product_id = p.product_id;
+      ```
+      | order_id | product_id | quantity | unit_price | product_id | name | quantity_in_stock | unit_price |
+      |----------|------------|----------|------------|------------|------|-------------------|------------|
+      |          |            |          |            |            |      |                   |            |
+      |          |            |          |            |            |      |                   |            |
+
+   - ### 2.3 Self Joins
+      ```sql
+      USE sql_hr;
+      
+      SELECT *
+      FROM employees e
+      JOIN employees m
+         ON e.reports_to = m.employee_id;
+      ```
+      | employee_id | first_name | last_name | job_title | salary | reports_to | office_id | employee_id | first_name | last_name | job_title | salary | reports_to | office_id |
+      |-------------|------------|-----------|-----------|--------|------------|-----------|-------------|------------|-----------|-----------|--------|------------|-----------|
+      |             |            |           |           |        |            |           |             |            |           |           |        |            |           |
+      |             |            |           |           |        |            |           |             |            |           |           |        |            |           |
+      
+      ```sql
+      USE sql_hr;
+      
+      SELECT 
+         e.employee_id,
+         e.first_name,
+         m.first_name
+      FROM employees e
+      JOIN employees m
+         ON e.reports_to = m.employee_id;
+      ```
+      | employee_id | first_name | first_name |
+      |-------------|------------|------------|
+      |             |            |            |
+      |             |            |            |
+      
+      ```sql
+      USE sql_hr;
+      
+      SELECT 
+         e.employee_id,
+         e.first_name,
+         m.first_name AS manager
+      FROM employees e
+      JOIN employees m
+         ON e.reports_to = m.employee_id;
+      ```
+      | employee_id | first_name | manager |
+      |-------------|------------|---------|
+      |             |            |         |
+      |             |            |         |
+      
+   - ### 2.4 Joining Multiple Tables
+      ```sql
+      USE sql_store;
+      
+      SELECT *
+      FROM orders o
+      JOIN customers c
+         ON o.customer_id = c.customer_id
+      JOIN order_statuses os
+         ON o.status = os.order_status_id;
+      ```
+      | order_id | customer_id | order_date | status | order_status_id | comments | customer_id | first_name | last_name | points | state | phone_no | birth_date |
+      |----------|-------------|------------|--------|-----------------|----------|-------------|------------|-----------|--------|-------|----------|------------|
+      |          |             |            |        |                 |          |             |            |           |        |       |          |            |
+      |          |             |            |        |                 |          |             |            |           |        |       |          |            |
+      
+      ```sql
+      USE sql_store;
+      
+      SELECT 
+         o.order_id,
+         o.order_date,
+         c.first_name,
+         c.last_name,
+         os.name AS status
+      FROM orders o
+      JOIN customers c
+         ON o.customer_id = c.customer_id
+      JOIN order_statuses os
+         ON o.status = os.order_status_id;
+      ```
+      | order_id | order_date | first_name | last_name | status |
+      |----------|------------|------------|-----------|--------|
+      |          |            |            |           |        |
+      |          |            |            |           |        |
+      
+   - ### 2.5 Compound Join Conditions
+      ```sql
+      SELECT *
+      FROM order_items oi
+      JOIN order_item_notes oin
+         ON oi.order_id = oin.order_id
+         AND oi.product_id = oin.product_id;
+      ```
+      | order_id | product_id | order_date | status | comments | product_id | first_name | last_name | points | state | phone_no | birth_date |
+      |----------|------------|------------|--------|----------|------------|------------|-----------|--------|-------|----------|------------|
+      |          |            |            |        |          |            |            |           |        |       |          |            |
+      |          |            |            |        |          |            |            |           |        |       |          |            |
+      
+   - ### 2.6 Implicit Join Syntax
+      - `Explicit Inner Join Syntax`
+      ```sql
+      SELECT *
+      FROM orders o
+      JOIN customers c
+         ON o.customer_id = c.customer_id;
+      ```
+      - `Implicit Inner Join Syntax`
+      ```sql
+      SELECT *
+      FROM orders o, customers c
+      WHERE o.customer_id = c.customer_id;
+      ```
+      | order_id | customer_id | orderr_date | status | comments | customer_id | first_name | last_name | points | state | phone_no | birth_date |
+      |----------|-------------|-------------|--------|----------|-------------|------------|-----------|--------|-------|----------|------------|
+      |          |             |             |        |          |             |            |           |        |       |          |            |
+      |          |             |             |        |          |             |            |           |        |       |          |            |
+      
+   - ### 2.7 OUTER Joins
+      - `OUTER Joins are two types`
+         - `LEFT OUTER JOIN`
+         - `RIGHT OUTER JOIN` 
+      - `And here also OUTER keyword is optional` `so write syntax as`
+         - `LEFT JOIN`
+         - `RIGHT JOIN`
+      ```sql
+      SELECT *
+      FROM orders o
+      LEFT OUTER JOIN customers c
+         ON o.customer_id = c.customer_id
+      ORDER BY c.customer_id;
+      ```
+      ```sql
+      SELECT *
+      FROM orders o
+      LEFT JOIN customers c
+         ON o.customer_id = c.customer_id
+      ORDER BY c.customer_id;
+      ```
+      | order_id | customer_id | orderr_date | status | comments | customer_id | first_name | last_name | points | state | phone_no | birth_date |
+      |----------|-------------|-------------|--------|----------|-------------|------------|-----------|--------|-------|----------|------------|
+      |          |             |             |        |          |             |            |           |        |       |          |            |
+      |          |             |             |        |          |             |            |           |        |       |          |            |
+      
+      ```sql
+      SELECT *
+      FROM orders o
+      RIGHT OUTER JOIN customers c
+         ON o.customer_id = c.customer_id
+      ORDER BY c.customer_id;
+      ```
+      ```sql
+      SELECT *
+      FROM orders o
+      RIGHT JOIN customers c
+         ON o.customer_id = c.customer_id
+      ORDER BY c.customer_id;
+      ```
+      | order_id | customer_id | orderr_date | status | comments | customer_id | first_name | last_name | points | state | phone_no | birth_date |
+      |----------|-------------|-------------|--------|----------|-------------|------------|-----------|--------|-------|----------|------------|
+      |          |             |             |        |          |             |            |           |        |       |          |            |
+      |          |             |             |        |          |             |            |           |        |       |          |            |
+      
+      ```sql
+      SELECT 
+         o.order_id,
+         c.customer_id,
+         c.first_name
+      FROM orders o
+      LEFT JOIN customers c
+         ON o.customer_id = c.customer_id
+      ORDER BY c.customer_id;
+      ```
+      | order_id | customer_id | first_name |
+      |----------|-------------|------------|
+      |          |             |            |
+      |          |             |            |
+      
+      ```sql
+      SELECT 
+         o.order_id,
+         c.customer_id,
+         c.first_name
+      FROM orders o
+      RIGHT JOIN customers c
+         ON o.customer_id = c.customer_id
+      ORDER BY c.customer_id;
+      ```
+      | order_id | customer_id | first_name |
+      |----------|-------------|------------|
+      |          |             |            |
+      |          |             |            |
+      
+   - ### 2.8 OUTER Join Between Multiple Tables
+      ```sql
+      SELECT 
+         o.order_id,
+         c.customer_id,
+         c.first_name
+      FROM orders o
+      LEFT JOIN customers c
+         ON o.customer_id = c.customer_id
+      JOIN shippers sh
+         ON o.shipper_id = sh.shipper_id
+      ORDER BY c.customer_id;
+      ```
+      | order_id | customer_id | first_name |
+      |----------|-------------|------------|
+      |          |             |            |
+      |          |             |            |
+      
+      ```sql
+      SELECT 
+         o.order_id,
+         c.customer_id,
+         c.first_name,
+         sh.name AS shipper
+      FROM orders o
+      LEFT JOIN customers c
+         ON o.customer_id = c.customer_id
+      LEFT JOIN shippers sh
+         ON o.shipper_id = sh.shipper_id
+      ORDER BY c.customer_id;
+      ```
+      | order_id | customer_id | first_name | shipper |
+      |----------|-------------|------------|---------|
+      |          |             |            |         |
+      |          |             |            |         |
+      
+   - ### 2.9 Self Outer Joins
+      ```sql
+      USE sql_hr;
+      
+      SELECT 
+         e.employee_id,
+         e.first_name,
+         m.first_name AS manager
+      FROM employees e
+      LEFT JOIN employees m
+         ON e.reports_to = m.employee_id;
+      ```
+      | employee_id | first_name | manager |
+      |-------------|------------|---------|
+      |             |            |         |
+      |             |            |         |
+      
+   - ### 2.10 The USING Clause
+      - `use USING keyword if same column name in both tables`
+      ```sql
+      SELECT 
+         o.order_id,
+         c.first_name
+      FROM orders o
+      JOIN customers c
+         ON o.customer_id = c.customer_id;
+      ```
+      ```sql
+      SELECT 
+         o.order_id,
+         c.first_name
+      FROM orders o
+      JOIN customers c
+         USING (customer_id);
+      ```
+      | order_id | first_name |
+      |----------|------------|
+      |          |            |
+      |          |            |
+      
+      ```sql
+      SELECT *
+      FROM order_items oi
+      JOIN order_item_notes oin
+         ON oi.order_id = oin.order_id
+         AND oi.product_id = oin.product_id;
+      ```      
+      ```sql
+      SELECT *
+      FROM order_items oi
+      JOIN order_item_notes oin
+         USING (order_id, product_id);
+      ```
+      | order_id | product_id | order_date | status | comments | product_id | first_name | last_name | points | state | phone_no | birth_date |
+      |----------|------------|------------|--------|----------|------------|------------|-----------|--------|-------|----------|------------|
+      |          |            |            |        |          |            |            |           |        |       |          |            |
+      |          |            |            |        |          |            |            |           |        |       |          |            |
+      
+   - ### 2.11 NATURAL Joins
+      ```sql
+      SELECT 
+         o.order_id,
+         c.customer_id,
+         c.first_name
+      FROM orders o
+      NATURAL JOIN customers c;
+      ```
+      | order_id | customer_id | first_name |
+      |----------|-------------|------------|
+      |          |             |            |
+      |          |             |            |
+      
+   - ### 2.12 CROSS Joins
+      - `Explicit Inner Join Syntax`
+      ```sql
+      SELECT 
+         c.first_name AS customer,
+         p.name AS product
+      FROM customers c
+      CROSS JOIN product p
+      ORDER BY c.first_name;
+      ```
+      - `Implicit Inner Join Syntax`
+      ```sql
+      SELECT 
+         c.first_name AS customer,
+         p.name AS product
+      FROM customers c, product p
+      ORDER BY c.first_name;
+      ```
+      | customer | product |
+      |----------|---------|
+      |          |         |
+      |          |         |
+      
+   - ### 2.13 Unions
+      ```sql
+      SELECT
+         customer_id,
+         first_name,
+         points,
+         'Bronze' AS type
+      FROM customers
+      WHERE points < 2000;
+      
+      UNION
+      
+      SELECT
+         customer_id,
+         first_name,
+         points,
+         'Silver' AS type
+      FROM customers
+      WHERE points BETWEEN 2000 AND 3000;
+      
+      UNION
+      
+      SELECT
+         customer_id,
+         first_name,
+         points,
+         'Gold' AS type
+      FROM customers
+      WHERE points > 3000
+      
+      ORDER BY first_name;      
+      ```
+      | customer_id | first_name | points | type |
+      |-------------|------------|--------|------|
+      |             |            |        |      |
+      |             |            |        |      |
+      
+## 3. Inserting, Updating, and Deleting Data
+      
